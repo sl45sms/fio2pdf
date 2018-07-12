@@ -4,7 +4,7 @@
 	"description": "A form.io form render as PDF.",
 	"private": true,
 	"scripts": {
-		"start": "npm install && nodemon render.js"
+		"start": "npm install && nodemon --max_old_space_size=4096 render.js"
 	},
 	"author": "Panagiotis Skarvelis",
 	"license": "EUPL v1.1",

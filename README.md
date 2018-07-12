@@ -5,8 +5,12 @@ Docker Service, Corvert Form to PDF
 
 docker build -t skarvelis/fio2pdf:1.0 .
 
+# run
+
+docker run -d skarvelis/fio2pdf:1.0
 
 # usage 
+
 You have to post the form and submition id,for  example:
 
 ```json

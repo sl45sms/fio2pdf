@@ -44,41 +44,36 @@ var template=`
 </html>
 `;
 
-
 function render(sid,fid,res,next){
 // First authenticate.
    formio.authenticate(config.formio_admin_email, config.formio_admin_password,"/user/login").then(function() {
       // Create a new form instance.
       var form = new Form(config.formio_protocol+'://'+config.formio_host+':'+config.formio_port+'/form/'+fid);
-   
+        
       form.load().then(function(form_object){
              form_object.form.display="form"; //alway ovveride in case of wizard 
              form.loadSubmission(sid).then(function(submission){ 
-
                        //Write temp file
                        var JF = escapeJSON(JSON.stringify(form_object).replace(/\r?\n|\r/g, " "));
                        var JS = escapeJSON(JSON.stringify(submission).replace(/\r?\n|\r/g, " ")); 
                        template = template.replace('--FORM--',JF);
                        template = template.replace('--SUBMISSION--',JS);
                        var fn=uuidv1()+'.html';
- 
-                        fs.writeFile("./tmp/"+fn, template, function(err) {
+                       fs.writeFile("/tmp/"+fn, template, function(err) {
                            if(err) {
                                 res.setHeader('Content-Type', 'application/json');
                                 res.send(err);
-                                     }
-                                       console.log("The file was saved!"); 
-                                        RenderPDF.generatePdfBuffer('file://'+__dirname+'/tmp/'+fn).then((pdfBuffer) => {                                         
-                                         res.setHeader('Content-Type', 'application/pdf'); 
-                                         fs.unlinkSync("./tmp/"+fn);
-                                         res.send(pdfBuffer);
+                                    }
+                                     
+                                    RenderPDF.generatePdfBuffer('file:///tmp/'+fn,{chromeOptions: ['--no-sandbox']}).then((pdfBuffer) => {                                         
+                                      res.setHeader('Content-Type', 'application/pdf'); 
+                                      fs.unlinkSync("/tmp/"+fn);
+                                      res.send(pdfBuffer);
                                         });
                                      });          
            });
-
         });
      });
-
 }
 
 // Create our application.
