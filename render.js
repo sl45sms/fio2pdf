@@ -1,12 +1,24 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
-var config = require('./config.json');
 var escapeJSON = require('escape-json-node');
 var fs = require('fs');
 const uuidv1 = require('uuid/v1');
-
 const RenderPDF = require('chrome-headless-render-pdf');
+
+if (fs.existsSync('.config.json')) {
+ var config = require('./config.json');
+} else
+{
+var config = {
+"port": process.env.PORT || "6112",
+"formio_protocol":process.env.FORMIO_PROTOCOL || "http",
+"formio_host": process.env.FORMIO_HOST || "formio-api",
+"formio_port": process.env.FORMIO_PORT || "3001",
+"formio_admin_email": process.env.FORMIO_ADMIN_EMAIL,
+"formio_admin_password": process.env.FORMIO_ADMIN_PASSWORD
+}
+}
 
 var formio = require('formio-service')(
 {
