@@ -1,0 +1,23 @@
+{
+	"name": "fio2pdf",
+	"version": "1.0.0",
+	"description": "A form.io form render as PDF.",
+	"private": true,
+	"scripts": {
+		"start": "npm install && nodemon render.js"
+	},
+	"author": "Panagiotis Skarvelis",
+	"license": "EUPL v1.1",
+	"dependencies": {
+                "escape-json-node":"^2.0.0",
+                "bootstrap":"^4.1.1",
+                "uuid":"^3.3.2",
+		"formiojs": "^2.32.3",
+                "formio-service":"^1.4.0",
+		"body-parser": "^1.12.4",
+		"express": "^4.12.4",
+		"method-override": "^2.3.3",
+                "chrome-headless-render-pdf":"^1.7.2",
+		"nodemon": "*"
+	}
+}

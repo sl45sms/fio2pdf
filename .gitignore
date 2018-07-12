@@ -1,3 +1,13 @@
+# secrets
+config.json
+
+# editors
+*.swp
+
+# trash
+*.pdf
+trash
+
 # Logs
 logs
 *.log
