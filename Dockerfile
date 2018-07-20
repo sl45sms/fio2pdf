@@ -11,11 +11,14 @@ RUN curl -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key ad
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
 RUN apt-get update && apt-get install -y --no-install-recommends nodejs
-RUN npm install -g chrome-headless-render-pdf
+#RUN npm install -g chrome-headless-render-pdf
 
 EXPOSE 6112
 
-ADD . /
+RUN mkdir /app
+ADD . /app
+WORKDIR /app
+
+RUN npm install
 
 CMD npm start
-

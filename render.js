@@ -32,9 +32,9 @@ var Form = formio.Form;
 var template=`
 <html>
 <head>
-    <link rel='stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.min.css'>
-    <link rel='stylesheet' href='../node_modules/formiojs/dist/formio.full.min.css'>
-    <script src='../node_modules/formiojs/dist/formio.full.min.js'></script>
+    <link rel='stylesheet' href='/app/node_modules/bootstrap/dist/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='/app/node_modules/formiojs/dist/formio.full.min.css'>
+    <script src='/app/node_modules/formiojs/dist/formio.full.min.js'></script>
     <script type='text/javascript'>
              window.onload = function() {
              var form_object=JSON.parse(\`--FORM--\`.replace(/\\r?\\n|\\r/g, ''));
@@ -56,7 +56,7 @@ var template=`
 </html>
 `;
 
-function render(sid,fid,res,next){
+function render(sid,fid,res,type){
 // First authenticate.
    formio.authenticate(config.formio_admin_email, config.formio_admin_password,"/user/login").then(function() {
       // Create a new form instance.
@@ -78,10 +78,18 @@ function render(sid,fid,res,next){
                                     }
                                      
                                     RenderPDF.generatePdfBuffer('file:///tmp/'+fn,{chromeOptions: ['--no-sandbox']}).then((pdfBuffer) => {                                         
-                                      res.setHeader('Content-Type', 'application/pdf'); 
                                       fs.unlinkSync("/tmp/"+fn);
-                                      res.send(pdfBuffer);
-                                        });
+                                      if (type=="pdf"){
+                                        res.setHeader('Content-Type', 'application/pdf'); 
+                                        res.send(pdfBuffer);
+                                        } else
+                                        {
+                                         res.setHeader('Content-Type', 'application/json');
+                                         res.send('{"file":"' + pdfBuffer.toString('base64') +'"}');
+                                        }                                      
+                                     
+
+                                               });
                                      });          
            });
         });
@@ -96,12 +104,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(methodOverride('X-HTTP-Method-Override'));
 
-app.post('/', function(req, res, next) {
+app.post('/', function(req, res) {
 
-  render(req.body.submission._id,req.body.submission.form,res,next);
+  render(req.body.submission._id,req.body.submission.form,res,"pdf");
 
 });
 
-console.log('Listening to port ' + config.port);
-app.listen(config.port);
+app.post('/base64', function(req, res) {
 
+  render(req.body.submission._id,req.body.submission.form,res,"base64");
+
+});
+
+
+console.log('Listening to port ' + config.port);
+app.listen(config.port)
